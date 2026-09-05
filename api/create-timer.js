@@ -32,7 +32,6 @@ async function connectToDatabase() {
 }
 
 export default async function handler(req, res) {
-  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -48,12 +47,10 @@ export default async function handler(req, res) {
   try {
     const { name, description, startTime, years, months, days, hours, minutes, seconds } = req.body;
 
-    // Validate required fields
     if (!name || name.trim() === '') {
       return res.status(400).json({ error: 'Timer name is required' });
     }
 
-    // Validate duration
     const total = (years || 0) + (months || 0) + (days || 0) + (hours || 0) + (minutes || 0) + (seconds || 0);
     if (total <= 0) {
       return res.status(400).json({ error: 'Duration must be greater than 0' });

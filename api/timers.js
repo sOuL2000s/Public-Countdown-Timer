@@ -32,7 +32,6 @@ async function connectToDatabase() {
 }
 
 export default async function handler(req, res) {
-  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -49,7 +48,6 @@ export default async function handler(req, res) {
     const db = await connectToDatabase();
     const collection = db.collection(collectionName);
 
-    // Get only active timers (where timer hasn't expired)
     const now = Date.now();
     const timers = await collection
       .find({})
@@ -57,7 +55,6 @@ export default async function handler(req, res) {
       .limit(100)
       .toArray();
 
-    // Filter out expired timers in memory (they'll be cleaned up by cleanup endpoint)
     const activeTimers = timers.filter(timer => {
       const totalMs = (timer.years || 0) * 365.25 * 24 * 60 * 60 * 1000 +
         (timer.months || 0) * 30.44 * 24 * 60 * 60 * 1000 +

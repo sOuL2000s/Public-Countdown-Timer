@@ -32,7 +32,6 @@ async function connectToDatabase() {
 }
 
 export default async function handler(req, res) {
-  // Set CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -49,12 +48,10 @@ export default async function handler(req, res) {
     const db = await connectToDatabase();
     const collection = db.collection(collectionName);
 
-    // Find all timers
     const timers = await collection.find({}).toArray();
     const now = Date.now();
     const expiredIds = [];
 
-    // Check each timer to see if it's expired
     for (const timer of timers) {
       const totalMs = (timer.years || 0) * 365.25 * 24 * 60 * 60 * 1000 +
         (timer.months || 0) * 30.44 * 24 * 60 * 60 * 1000 +
@@ -69,7 +66,6 @@ export default async function handler(req, res) {
       }
     }
 
-    // Delete expired timers
     let deletedCount = 0;
     if (expiredIds.length > 0) {
       const result = await collection.deleteMany({
