@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Public countdown timers with MongoDB persistence and auto-cleanup",
   "main": "index.html",
-  "scripts": {
-    "dev": "vercel dev"
-  },
   "dependencies": {
     "mongodb": "^5.9.0"
   }

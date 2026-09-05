@@ -141,3 +141,4 @@ dist
 # SvelteKit build / generate output
 .svelte-kit
 combined_project_files.txt
+.vercel
