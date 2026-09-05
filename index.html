@@ -141,6 +141,15 @@
       backdrop-filter: blur(10px);
     }
 
+    .form-group input[type="datetime-local"] {
+      color-scheme: dark;
+    }
+
+    .form-group input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+
     .form-group input::placeholder,
     .form-group textarea::placeholder {
       color: rgba(255, 255, 255, 0.5);
@@ -157,6 +166,45 @@
     .form-group textarea {
       resize: vertical;
       min-height: 60px;
+    }
+
+    .mode-selector {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .mode-selector label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      padding: 0.4rem 1rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .mode-selector label:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .mode-selector input[type="radio"] {
+      display: none;
+    }
+
+    .mode-selector input[type="radio"]:checked + label {
+      border-color: #f093fb;
+      background: rgba(240, 147, 251, 0.15);
+    }
+
+    .mode-selector label .icon {
+      font-size: 1.2rem;
     }
 
     .time-inputs {
@@ -271,6 +319,13 @@
       font-weight: 700;
     }
 
+    .timers-header .controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
     .timers-header .count {
       background: rgba(255, 255, 255, 0.15);
       padding: 0.4rem 1.2rem;
@@ -279,6 +334,50 @@
       font-weight: 600;
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .refresh-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 0.4rem 1.2rem;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .refresh-btn:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .refresh-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .refresh-btn .icon {
+      font-size: 1.1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .refresh-btn.spinning .icon {
+      animation: spin 0.8s ease;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .timer-grid {
@@ -470,6 +569,39 @@
       border-color: rgba(96, 165, 250, 0.3);
     }
 
+    .datetime-wrapper {
+      position: relative;
+    }
+
+    .datetime-wrapper input[type="datetime-local"] {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      font-size: 1rem;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .datetime-wrapper input[type="datetime-local"]:focus {
+      outline: none;
+      border-color: #f093fb;
+      background: rgba(255, 255, 255, 0.15);
+      box-shadow: 0 0 0 4px rgba(240, 147, 251, 0.2);
+    }
+
+    .datetime-wrapper input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
     @keyframes fadeDown {
       from {
         opacity: 0;
@@ -554,6 +686,29 @@
         background-position: -200% 0;
       }
     }
+
+    .current-time-display {
+      color: rgba(255, 255, 255, 0.4);
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      display: inline-block;
+    }
+
+    .timer-card.instant-add {
+      animation: pulse-glow 0.6s ease 3;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        box-shadow: 0 0 20px rgba(240, 147, 251, 0.2);
+      }
+      50% {
+        box-shadow: 0 0 40px rgba(240, 147, 251, 0.5);
+      }
+    }
   </style>
 </head>
 <body>
@@ -578,7 +733,23 @@
             <label for="timerDesc">Description</label>
             <textarea id="timerDesc" placeholder="What are you counting down to?"></textarea>
           </div>
+          
           <div class="form-group" style="grid-column: 1 / -1;">
+            <label>Timer Mode</label>
+            <div class="mode-selector">
+              <input type="radio" name="mode" id="modeDuration" value="duration" checked />
+              <label for="modeDuration">
+                <span class="icon">⏱️</span> Duration
+              </label>
+              <input type="radio" name="mode" id="modeDate" value="date" />
+              <label for="modeDate">
+                <span class="icon">📅</span> Specific Date & Time
+              </label>
+            </div>
+          </div>
+
+          <!-- Duration Mode -->
+          <div class="form-group" style="grid-column: 1 / -1;" id="durationMode">
             <label>Duration</label>
             <div class="time-inputs">
               <div class="time-unit">
@@ -607,6 +778,36 @@
               </div>
             </div>
           </div>
+
+          <!-- Date Mode -->
+          <div class="form-group hidden" style="grid-column: 1 / -1;" id="dateMode">
+            <label>Target Date & Time</label>
+            <div class="datetime-wrapper">
+              <input type="datetime-local" id="targetDateTime" />
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.25rem;">
+              <p style="color: rgba(255,255,255,0.4); font-size: 0.8rem;">
+                ⏰ The timer will count down to this exact date and time
+              </p>
+              <button type="button" class="current-time-btn" id="setCurrentTimeBtn" style="
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: white;
+                padding: 0.3rem 0.8rem;
+                border-radius: 8px;
+                cursor: pointer;
+                font-family: 'Inter', sans-serif;
+                font-size: 0.8rem;
+                transition: all 0.3s ease;
+              ">
+                📍 Set to Current Time
+              </button>
+            </div>
+            <div class="current-time-display" id="currentTimeDisplay">
+              Current Time: <span id="currentTimeText">Loading...</span>
+            </div>
+          </div>
+
           <button type="submit" class="submit-btn" id="submitBtn">
             <span>▶</span> Start Timer
           </button>
@@ -617,7 +818,12 @@
     <div>
       <div class="timers-header">
         <h2>⏲️ Active Timers</h2>
-        <span class="count" id="timerCount">0 active</span>
+        <div class="controls">
+          <span class="count" id="timerCount">0 active</span>
+          <button class="refresh-btn" id="refreshBtn">
+            <span class="icon">🔄</span> Refresh
+          </button>
+        </div>
       </div>
       <div id="timerContainer" class="timer-grid">
         <div class="loading-shimmer">⏳ Loading timers...</div>
@@ -630,10 +836,11 @@
   <script>
     // Configuration
     const API_BASE = window.location.origin + '/api';
-    let refreshInterval;
-    let cleanupInterval;
     let timersData = [];
     let timerUpdateInterval;
+    let isRefreshing = false;
+    let currentTimeInterval;
+    let pendingTimers = [];
 
     // Toast notification
     function showToast(message, type = 'info', duration = 3000) {
@@ -694,6 +901,11 @@
       return div.innerHTML;
     }
 
+    // Generate temporary ID for instant display
+    function generateTempId() {
+      return 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    }
+
     // Fetch timers from API
     async function fetchTimers() {
       try {
@@ -745,6 +957,57 @@
       }
     }
 
+    // Add timer instantly to UI
+    function addTimerInstantly(timerData) {
+      const tempId = generateTempId();
+      const newTimer = {
+        _id: tempId,
+        name: timerData.name,
+        description: timerData.description || '',
+        startTime: timerData.startTime,
+        years: timerData.years,
+        months: timerData.months,
+        days: timerData.days,
+        hours: timerData.hours,
+        minutes: timerData.minutes,
+        seconds: timerData.seconds,
+        _isTemp: true
+      };
+      
+      // Add to timers data
+      timersData.unshift(newTimer);
+      
+      // Render immediately
+      renderTimers();
+      
+      // Highlight the new timer
+      setTimeout(() => {
+        const cards = document.querySelectorAll('.timer-card');
+        if (cards.length > 0) {
+          const firstCard = cards[0];
+          firstCard.classList.add('instant-add');
+          setTimeout(() => {
+            firstCard.classList.remove('instant-add');
+          }, 2000);
+        }
+      }, 100);
+      
+      return tempId;
+    }
+
+    // Replace temp timer with real one from server
+    function replaceTempTimer(tempId, realTimer) {
+      const index = timersData.findIndex(t => t._id === tempId);
+      if (index !== -1) {
+        // Keep the same position but replace with real data
+        timersData[index] = {
+          ...realTimer,
+          _isTemp: false
+        };
+        renderTimers();
+      }
+    }
+
     // Render timers from cached data
     function renderTimers() {
       const container = document.getElementById('timerContainer');
@@ -752,7 +1015,7 @@
 
       if (!container) return;
 
-      // Filter out finished timers (they'll be cleaned up by the server)
+      // Filter out finished timers
       const activeTimers = timersData.filter(timer => {
         const remaining = getRemainingMs(timer);
         return remaining > 0;
@@ -779,12 +1042,26 @@
         const isFinished = remainingMs <= 0;
         const statusClass = isFinished ? 'finished' : 'active';
         const statusText = isFinished ? 'Finished' : 'Counting Down';
+        const isTemp = timer._isTemp || false;
+
+        // Calculate target date
+        const targetDate = new Date(timer.startTime + 
+          (timer.years || 0) * 365.25 * 24 * 60 * 60 * 1000 +
+          (timer.months || 0) * 30.44 * 24 * 60 * 60 * 1000 +
+          (timer.days || 0) * 24 * 60 * 60 * 1000 +
+          (timer.hours || 0) * 60 * 60 * 1000 +
+          (timer.minutes || 0) * 60 * 1000 +
+          (timer.seconds || 0) * 1000
+        );
+
+        const tempBadge = isTemp ? '<span style="font-size:0.6rem;background:rgba(240,147,251,0.3);padding:0.1rem 0.5rem;border-radius:10px;margin-left:0.5rem;">⏳ syncing...</span>' : '';
 
         html += `
-          <div class="timer-card" data-timer-id="${timer._id}">
+          <div class="timer-card" data-timer-id="${timer._id}" data-temp="${isTemp}">
             <div class="timer-name">
               ${escapeHtml(timer.name)}
               <span class="id">#${timer._id?.slice(-6) || '??'}</span>
+              ${tempBadge}
             </div>
             ${timer.description ? `<div class="timer-description">${escapeHtml(timer.description)}</div>` : ''}
             <div class="timer-display">
@@ -795,7 +1072,7 @@
                 <span class="dot"></span>
                 ${statusText}
               </span>
-              <span>${new Date(timer.startTime).toLocaleDateString()}</span>
+              <span>Target: ${targetDate.toLocaleDateString()} ${targetDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
             </div>
           </div>
         `;
@@ -829,17 +1106,89 @@
           }
         }
       });
+
+      // Update current time display
+      updateCurrentTimeDisplay();
+    }
+
+    // Update current time display
+    function updateCurrentTimeDisplay() {
+      const currentTimeText = document.getElementById('currentTimeText');
+      if (currentTimeText) {
+        const now = new Date();
+        currentTimeText.textContent = now.toLocaleString();
+      }
     }
 
     // Refresh timers from server
-    async function refreshTimers() {
+    async function refreshTimers(showToastMessage = false) {
+      const refreshBtn = document.getElementById('refreshBtn');
+      if (isRefreshing) return;
+      
+      isRefreshing = true;
+      refreshBtn.disabled = true;
+      refreshBtn.classList.add('spinning');
+
       try {
         const newTimers = await fetchTimers();
-        timersData = newTimers;
+        
+        // Merge with existing timers (keep temp ones)
+        const tempTimers = timersData.filter(t => t._isTemp);
+        const realTimers = newTimers.filter(t => !t._isTemp);
+        
+        // Replace real timers with server data
+        timersData = [...realTimers, ...tempTimers];
+        
         renderTimers();
+        
+        // Also cleanup finished timers on refresh
+        await cleanupFinishedTimers();
+        
+        if (showToastMessage) {
+          showToast('✅ Timers refreshed successfully!', 'success');
+        }
       } catch (error) {
         console.error('Error refreshing timers:', error);
+        showToast('Failed to refresh timers', 'info');
+      } finally {
+        isRefreshing = false;
+        refreshBtn.disabled = false;
+        setTimeout(() => {
+          refreshBtn.classList.remove('spinning');
+        }, 500);
       }
+    }
+
+    // Set target datetime to current time + 1 minute
+    function setTargetToCurrentTime() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 1);
+      
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      
+      const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
+      document.getElementById('targetDateTime').value = formatted;
+      showToast('📅 Target set to current time + 1 minute', 'info');
+    }
+
+    // Set default datetime value - NOW + 1 hour (future)
+    function setDefaultDateTime() {
+      const now = new Date();
+      now.setHours(now.getHours() + 1);
+      
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      
+      const formatted = `${year}-${month}-${day}T${hours}:${minutes}`;
+      document.getElementById('targetDateTime').value = formatted;
+      updateCurrentTimeDisplay();
     }
 
     // Handle form submission
@@ -849,6 +1198,7 @@
       const nameInput = document.getElementById('timerName');
       const descInput = document.getElementById('timerDesc');
       const submitBtn = document.getElementById('submitBtn');
+      const mode = document.querySelector('input[name="mode"]:checked').value;
 
       const name = nameInput.value.trim();
       if (!name) {
@@ -856,23 +1206,62 @@
         return;
       }
 
-      const years = parseInt(document.getElementById('years').value, 10) || 0;
-      const months = parseInt(document.getElementById('months').value, 10) || 0;
-      const days = parseInt(document.getElementById('days').value, 10) || 0;
-      const hours = parseInt(document.getElementById('hours').value, 10) || 0;
-      const minutes = parseInt(document.getElementById('minutes').value, 10) || 0;
-      const seconds = parseInt(document.getElementById('seconds').value, 10) || 0;
+      let years = 0, months = 0, days = 0, hours = 0, minutes = 0, seconds = 0;
+      let startTime = Date.now();
 
-      const total = years + months + days + hours + minutes + seconds;
-      if (total <= 0) {
-        showToast('Please set a duration greater than 0.', 'info');
-        return;
+      if (mode === 'duration') {
+        years = parseInt(document.getElementById('years').value, 10) || 0;
+        months = parseInt(document.getElementById('months').value, 10) || 0;
+        days = parseInt(document.getElementById('days').value, 10) || 0;
+        hours = parseInt(document.getElementById('hours').value, 10) || 0;
+        minutes = parseInt(document.getElementById('minutes').value, 10) || 0;
+        seconds = parseInt(document.getElementById('seconds').value, 10) || 0;
+
+        const total = years + months + days + hours + minutes + seconds;
+        if (total <= 0) {
+          showToast('Please set a duration greater than 0.', 'info');
+          return;
+        }
+      } else {
+        // Date mode
+        const targetDateTime = document.getElementById('targetDateTime').value;
+        if (!targetDateTime) {
+          showToast('Please select a target date and time.', 'info');
+          return;
+        }
+
+        const target = new Date(targetDateTime);
+        if (isNaN(target.getTime())) {
+          showToast('Invalid date/time selected.', 'info');
+          return;
+        }
+
+        const now = Date.now();
+        if (target.getTime() <= now) {
+          showToast('Target date must be in the future.', 'info');
+          return;
+        }
+
+        // Calculate duration from now to target
+        const diffMs = target.getTime() - now;
+        const totalSeconds = Math.floor(diffMs / 1000);
+        
+        years = Math.floor(totalSeconds / (365.25 * 24 * 60 * 60));
+        let rest = totalSeconds - years * 365.25 * 24 * 60 * 60;
+        months = Math.floor(rest / (30.44 * 24 * 60 * 60));
+        rest -= months * 30.44 * 24 * 60 * 60;
+        days = Math.floor(rest / (24 * 60 * 60));
+        rest -= days * 24 * 60 * 60;
+        hours = Math.floor(rest / (60 * 60));
+        rest -= hours * 60 * 60;
+        minutes = Math.floor(rest / 60);
+        seconds = rest % 60;
       }
 
       const timerData = {
         name,
         description: descInput.value.trim() || '',
-        startTime: Date.now(),
+        startTime: startTime,
         years,
         months,
         days,
@@ -884,8 +1273,19 @@
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span>⏳</span> Starting...';
 
+      // Add timer instantly to UI
+      const tempId = addTimerInstantly(timerData);
+      showToast('⏳ Timer started! Syncing with server...', 'info');
+
       try {
-        await createTimer(timerData);
+        // Send to backend
+        const result = await createTimer(timerData);
+        
+        // Replace temp timer with real one
+        if (result && result.timer) {
+          replaceTempTimer(tempId, result.timer);
+          showToast('✅ Timer saved to server!', 'success');
+        }
 
         // Reset form
         nameInput.value = '';
@@ -896,34 +1296,48 @@
         document.getElementById('hours').value = 0;
         document.getElementById('minutes').value = 0;
         document.getElementById('seconds').value = 0;
-
-        showToast('✅ Timer started successfully!', 'success');
-        await refreshTimers();
       } catch (error) {
-        showToast('Failed to create timer: ' + error.message, 'info');
+        // If server fails, keep the timer but show error
+        showToast('⚠️ Timer created locally but failed to sync: ' + error.message, 'info');
+        // Mark as failed sync but keep it
+        const tempTimer = timersData.find(t => t._id === tempId);
+        if (tempTimer) {
+          tempTimer._syncFailed = true;
+        }
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerHTML = '<span>▶</span> Start Timer';
       }
     }
 
-    // Start auto-refresh and cleanup
-    function startAutoRefresh() {
-      if (refreshInterval) clearInterval(refreshInterval);
-      if (cleanupInterval) clearInterval(cleanupInterval);
+    // Mode switching
+    function setupModeSwitching() {
+      const durationMode = document.getElementById('durationMode');
+      const dateMode = document.getElementById('dateMode');
+      
+      document.querySelectorAll('input[name="mode"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          if (this.value === 'duration') {
+            durationMode.classList.remove('hidden');
+            dateMode.classList.add('hidden');
+          } else {
+            durationMode.classList.add('hidden');
+            dateMode.classList.remove('hidden');
+          }
+        });
+      });
+    }
+
+    // Start real-time updates and cleanup
+    function startRealTimeUpdates() {
       if (timerUpdateInterval) clearInterval(timerUpdateInterval);
-
-      // Refresh timers from server every 5 seconds
-      refreshInterval = setInterval(refreshTimers, 5000);
-
+      if (currentTimeInterval) clearInterval(currentTimeInterval);
+      
       // Update timer displays every second (real-time countdown)
       timerUpdateInterval = setInterval(updateTimersRealtime, 1000);
-
-      // Run cleanup every 10 seconds
-      cleanupInterval = setInterval(async () => {
-        await cleanupFinishedTimers();
-        await refreshTimers();
-      }, 10000);
+      
+      // Update current time display every second
+      currentTimeInterval = setInterval(updateCurrentTimeDisplay, 1000);
     }
 
     // Init
@@ -931,14 +1345,51 @@
       const form = document.getElementById('timerForm');
       form.addEventListener('submit', handleSubmit);
 
-      await refreshTimers();
-      startAutoRefresh();
+      const refreshBtn = document.getElementById('refreshBtn');
+      refreshBtn.addEventListener('click', () => refreshTimers(true));
+
+      const setCurrentTimeBtn = document.getElementById('setCurrentTimeBtn');
+      setCurrentTimeBtn.addEventListener('click', setTargetToCurrentTime);
+
+      setupModeSwitching();
+      setDefaultDateTime();
+
+      // Initial load from server
+      const initialTimers = await fetchTimers();
+      timersData = initialTimers;
+      renderTimers();
+      
+      startRealTimeUpdates();
 
       // Initial cleanup on load
       setTimeout(async () => {
         await cleanupFinishedTimers();
-        await refreshTimers();
+        const freshTimers = await fetchTimers();
+        timersData = freshTimers;
+        renderTimers();
       }, 1000);
+
+      // Periodically sync with server (every 10 seconds)
+      setInterval(async () => {
+        // Only sync if there are temp timers
+        const hasTemp = timersData.some(t => t._isTemp);
+        if (hasTemp) {
+          // Try to sync temp timers with server
+          const serverTimers = await fetchTimers();
+          const tempTimers = timersData.filter(t => t._isTemp);
+          
+          // Check if any temp timers match server timers by name and startTime
+          for (const temp of tempTimers) {
+            const match = serverTimers.find(st => 
+              st.name === temp.name && 
+              Math.abs(st.startTime - temp.startTime) < 1000
+            );
+            if (match) {
+              replaceTempTimer(temp._id, match);
+            }
+          }
+        }
+      }, 10000);
     });
   </script>
 </body>
