@@ -19,6 +19,7 @@ async function connectToDatabase() {
   const client = new MongoClient(uri, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    maxPoolSize: 10,
   });
 
   await client.connect();
@@ -53,6 +54,7 @@ export default async function handler(req, res) {
     const timers = await collection
       .find({})
       .sort({ startTime: -1 })
+      .limit(100)
       .toArray();
 
     // Filter out expired timers in memory (they'll be cleaned up by cleanup endpoint)
